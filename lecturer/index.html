@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Timely — Lecturer Dashboard</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="main.css">
+</head>
+<body>
+  <div class="bg-cosmos"></div>
+  <div class="app-shell">
+
+    <!-- ============================================================
+         AUTH SCREEN
+         ============================================================ -->
+    <div id="authScreen" class="auth-screen active">
+      <div class="auth-container">
+        <div class="auth-brand">
+          <div class="auth-brand-icon">
+            <!-- Lucide Clock -->
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          </div>
+          <h1>Timely</h1>
+          <p>AI-Powered Face Recognition Attendance</p>
+        </div>
+
+        <div class="auth-tabs">
+          <button class="auth-tab active" data-tab="login">Login</button>
+          <button class="auth-tab" data-tab="signup">Sign Up</button>
+        </div>
+
+        <form id="authForm">
+          <div class="form-group">
+            <label class="form-label">Email</label>
+            <input type="email" id="emailInput" class="form-input" placeholder="you@university.edu" required>
+            <p id="emailError" class="form-error"></p>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Password</label>
+            <div class="password-wrapper">
+              <input type="password" id="passwordInput" class="form-input" placeholder="Enter your password" required>
+              <button type="button" class="password-toggle" onclick="togglePassword('passwordInput', this)">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+              </button>
+            </div>
+            <p id="passwordError" class="form-error"></p>
+          </div>
+
+          <div id="confirmPasswordGroup" class="form-group" style="display: none;">
+            <label class="form-label">Confirm Password</label>
+            <div class="password-wrapper">
+              <input type="password" id="confirmPasswordInput" class="form-input" placeholder="Confirm your password">
+              <button type="button" class="password-toggle" onclick="togglePassword('confirmPasswordInput', this)">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+              </button>
+            </div>
+            <p id="confirmPasswordError" class="form-error"></p>
+          </div>
+
+          <div id="nameGroup" class="form-group" style="display: none;">
+            <label class="form-label">Full Name</label>
+            <input type="text" id="nameInput" class="form-input" placeholder="Dr. Jane Smith">
+            <p id="nameError" class="form-error"></p>
+          </div>
+
+          <a id="forgotPasswordLink" class="forgot-link">Forgot Password?</a>
+          <button type="submit" id="authSubmitBtn" class="btn btn-primary btn-full">Login</button>
+        </form>
+      </div>
+    </div>
+
+    <!-- ============================================================
+         DASHBOARD SCREEN
+         ============================================================ -->
+    <div id="dashboardScreen" class="dashboard-screen">
+      <!-- Sticky Header -->
+      <div class="dash-header">
+        <div class="dash-header-inner">
+          <div class="brand-mark">
+            <div class="brand-mark-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            </div>
+            <span>Timely</span>
+          </div>
+          <div class="header-actions" style="position: relative;">
+            <button class="icon-btn" onclick="toggleProfileDropdown()" id="profileBtn" aria-label="Profile">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            </button>
+            <button class="icon-btn danger" onclick="handleLogout()" aria-label="Logout">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+            </button>
+            <!-- Profile Dropdown -->
+            <div class="profile-dropdown" id="profileDropdown">
+              <div class="profile-info">
+                <div class="pname" id="profileName">Dr. Smith</div>
+                <div class="pemail" id="profileEmail">smith@uni.edu</div>
+              </div>
+              <button class="dropdown-item danger" onclick="handleLogout()">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+                Sign Out
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="dash-body">
+        <!-- Welcome -->
+        <div class="welcome-section">
+          <p class="greeting">Welcome back,</p>
+          <h2 class="name" id="lecturerName">Dr. Smith</h2>
+        </div>
+
+        <!-- Stats -->
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-icon teal">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+            </div>
+            <div class="stat-info">
+              <div class="stat-value" id="totalClasses">0</div>
+              <div class="stat-label">Total Classes</div>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon amber">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
+            </div>
+            <div class="stat-info">
+              <div class="stat-value" id="totalStudents">0</div>
+              <div class="stat-label">Enrolled Students</div>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon green">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+            </div>
+            <div class="stat-info">
+              <div class="stat-value" id="avgAttendance">0%</div>
+              <div class="stat-label">Today's Attendance Rate</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Content: Classes + Attendance -->
+        <div class="content-grid">
+          <!-- Upcoming Classes -->
+          <div class="section-card">
+            <div class="section-header">
+              <h3>
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                Upcoming Classes
+              </h3>
+              <button class="add-btn" onclick="openClassModal()" aria-label="Add class">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+              </button>
+            </div>
+            <div id="classList"></div>
+          </div>
+
+          <!-- Attendance Overview -->
+          <div class="section-card">
+            <div class="section-header">
+              <h3>
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                Attendance Overview
+              </h3>
+            </div>
+            <div id="attendanceList"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================
+       ADD/EDIT CLASS MODAL
+       ============================================================ -->
+  <div id="classModal" class="modal-overlay">
+    <div class="modal">
+      <div class="modal-header">
+        <h3 id="classModalTitle" class="modal-title">Add New Class</h3>
+        <button class="modal-close" onclick="closeClassModal()">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form id="classForm">
+          <input type="hidden" id="classId">
+          <div class="form-group">
+            <label class="form-label">Class Name</label>
+            <input type="text" id="classNameInput" class="form-input" placeholder="e.g., Introduction to Programming" required>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Date</label>
+              <input type="date" id="classDateInput" class="form-input" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Time</label>
+              <input type="time" id="classTimeInput" class="form-input" required>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Duration (minutes)</label>
+            <input type="number" id="classDurationInput" class="form-input" placeholder="e.g., 90" min="15" max="300" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Location</label>
+            <input type="text" id="classLocationInput" class="form-input" placeholder="e.g., Room 101, Building A" required>
+          </div>
+          <div class="modal-actions">
+            <button type="submit" class="btn btn-primary btn-full">Save Class</button>
+            <button type="button" class="btn btn-cancel btn-full" onclick="closeClassModal()">Cancel</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================
+       ATTENDANCE DETAILS MODAL (Verification)
+       ============================================================ -->
+  <div id="attendanceModal" class="modal-overlay">
+    <div class="modal">
+      <div class="modal-header">
+        <h3 id="attendanceModalTitle" class="modal-title">Attendance Details</h3>
+        <button class="modal-close" onclick="closeAttendanceModal()">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div id="studentList" class="student-list"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================
+       CONFIRM DELETE MODAL
+       ============================================================ -->
+  <div id="confirmModal" class="modal-overlay">
+    <div class="modal" style="max-width: 400px;">
+      <div class="modal-body">
+        <div class="confirm-modal-content">
+          <div class="confirm-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg>
+          </div>
+          <h3 class="confirm-title">Delete Class?</h3>
+          <p id="confirmMessage" class="confirm-message">Are you sure you want to delete this class? This action cannot be undone.</p>
+          <div class="confirm-actions">
+            <button class="btn btn-cancel" onclick="closeConfirmModal()">Cancel</button>
+            <button id="confirmDeleteBtn" class="btn btn-danger">Delete</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================
+       FORGOT PASSWORD MODAL
+       ============================================================ -->
+  <div id="forgotModal" class="modal-overlay">
+    <div class="modal" style="max-width: 400px;">
+      <div class="modal-header">
+        <h3 class="modal-title">Reset Password</h3>
+        <button class="modal-close" onclick="closeForgotModal()">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p style="font-size: 14px; color: var(--text-secondary); margin-bottom: 20px; line-height: 1.5;">
+          Enter your email and we'll send you a password reset link.
+        </p>
+        <form id="forgotForm">
+          <div class="form-group">
+            <label class="form-label">Email Address</label>
+            <input type="email" id="forgotEmailInput" class="form-input" placeholder="you@university.edu" required>
+          </div>
+          <button type="submit" class="btn btn-primary btn-full">Send Reset Link</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Container -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <script src="main.js"></script>
+  
+</body>
+</html>

@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Timely - Attendance Tracker</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap"
+        rel="stylesheet">
+    <link rel='stylesheet' type='text/css' media='screen' href='main.css'>
+</head>
+
+<body>
+    <div class="app-container">
+        <div class="bg-pattern"></div>
+
+        <!-- Home Screen -->
+        <div id="home-screen" class="screen active">
+            <header class="header">
+                <h1 class="header-title">Timely</h1>
+                <button class="header-icon" onclick="showLogoutModal()" aria-label="Logout">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                    </svg>
+                </button>
+            </header>
+
+            <div class="welcome">
+                <p class="welcome-greeting">Hello</p>
+                <h2 class="welcome-name">Student</h2>
+            </div>
+
+            <div class="stats-card">
+                <div class="stat-item">
+                    <div class="stat-value" id="total-classes">0</div>
+                    <div class="stat-label">Classes Today</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" id="attended-count">0</div>
+                    <div class="stat-label">Attended</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" id="attendance-rate">0%</div>
+                    <div class="stat-label">Rate</div>
+                </div>
+            </div>
+
+            <h3 class="section-title">Today's Classes</h3>
+            <div class="class-list" id="class-list"></div>
+        </div>
+
+        <!-- Location Verification Screen -->
+        <div id="location-screen" class="screen">
+            <button class="back-btn" onclick="navigateTo('home-screen')">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+                </svg>
+            </button>
+
+            <div class="verification-header">
+                <h2 class="verification-title">Location Verification</h2>
+                <p class="verification-subtitle">Confirm you're at the class location</p>
+            </div>
+
+            <div class="map-container">
+                <div class="map-placeholder">
+                    <div class="map-ripple"></div>
+                    <div class="map-ripple"></div>
+                    <div class="map-ripple"></div>
+                    <div class="map-pin">
+                        <svg fill="currentColor" viewBox="0 0 24 24">
+                            <path
+                                d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" />
+                        </svg>
+                    </div>
+                </div>
+            </div>
+
+            <div class="location-info">
+                <p class="location-name" id="location-name">Engineering Building</p>
+                <p class="location-address" id="location-address">Room 301, Block A</p>
+            </div>
+
+            <button class="btn btn-primary btn-full" onclick="verifyLocation()">
+                <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                </svg>
+                Verify Location
+            </button>
+        </div>
+
+        <!-- Face Verification Screen -->
+        <div id="face-screen" class="screen">
+            <button class="back-btn" onclick="navigateTo('home-screen')">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+                </svg>
+            </button>
+
+            <div class="verification-header">
+                <h2 class="verification-title">Face Verification</h2>
+                <p class="verification-subtitle">Align your face within the frame</p>
+            </div>
+
+            <div class="camera-container">
+                <div class="camera-placeholder">
+                    <!-- Live video feed for face detection -->
+                    <video id="video" autoplay muted playsinline
+                        style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; border-radius: 12px;">
+                    </video>
+                    <canvas id="output_canvas" style="position: absolute; left: 0; top: 0;"></canvas>
+                    <!-- Face outline / oval overlay -->
+                    <div class="face-outline"
+                        style="position: absolute; top: 25%; left: 25%; transform: translate(-25%, -25%); pointer-events: none;">
+                        
+                    </div>
+
+                    <!-- Scan line -->
+                    <div class="scan-line"
+                        style="position: absolute; top: 50%; left: 0; width: 100%; height: 2px; background: rgba(0, 255, 0, 0.5); animation: scan 2s infinite;">
+                    </div>
+
+                    <!-- Hint text -->
+                    <span class="camera-hint" id="camera-hint"
+                        style="position: absolute; bottom: 10px; width: 100%; text-align: center;">
+                        Position your face in the oval
+                    </span>
+                </div>
+        </div>
+
+   
+        
+
+        
+    </div>
+
+    <!-- Success Screen -->
+    <div id="success-screen" class="screen">
+        <div class="success-container">
+            <div class="success-icon">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7" />
+                </svg>
+            </div>
+            <h2 class="success-title">Attendance Recorded!</h2>
+            <p class="success-message">
+                <span id="success-student-name" style="font-size: large; color: green;"></span><br>You've successfully marked your attendance for<br>
+                <span class="success-class" id="success-class-name">Advanced Mathematics</span>
+            </p>
+            <div class="success-actions">
+                <button class="btn btn-primary btn-full" onclick="navigateTo('home-screen')">
+                    Return to Home
+                </button>
+                <button class="btn btn-secondary btn-full" onclick="navigateTo('attendance-screen')">
+                    View My Attendance
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Attendance History Screen -->
+    <div id="attendance-screen" class="screen">
+        <button class="back-btn" onclick="navigateTo('home-screen')">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+            </svg>
+        </button>
+
+        <div class="verification-header">
+            <h2 class="verification-title">My Attendance</h2>
+            <p class="verification-subtitle">Today's attendance record</p>
+        </div>
+
+        <div class="attendance-list" id="attendance-list"></div>
+    </div>
+
+    <!-- Logout Modal -->
+    <div class="modal-overlay" id="logout-modal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 class="modal-title">Logout</h3>
+                <button class="modal-close" onclick="hideLogoutModal()">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p style="margin-bottom: 20px; color: var(--text-secondary);">Are you sure you want to logout?</p>
+                <div style="display: flex; gap: 12px;">
+                    <button class="btn btn-secondary" style="flex: 1;" onclick="hideLogoutModal()">Cancel</button>
+                    <button class="btn btn-primary" style="flex: 1;" onclick="logout()">Logout</button>
+                </div>
+            </div>
+        </div>
+    </div>
+<!-- Alert Modal -->
+    <div class="alert-modal" id="alert-modal">
+      <div class="alert-box">
+        <div class="alert-icon" id="alert-icon">
+          <svg id="alert-icon-success" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+          </svg>
+          <svg id="alert-icon-error" style="display: none;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+          <svg id="alert-icon-warning" style="display: none;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+          </svg>
+        </div>
+        <h3 class="alert-title" id="alert-title">Success</h3>
+        <p class="alert-message" id="alert-message">Operation completed successfully.</p>
+        <button class="btn btn-primary btn-full" onclick="closeAlertModal()">OK</button>
+      </div>
+    </div>
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loading-overlay">
+        <div class="loading-spinner"></div>
+        <p class="loading-text" id="loading-text">Verifying...</p>
+    </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.3" type="module"></script>
+    <script src="main.js" type="module"></script>
+</body>
+
+</html>

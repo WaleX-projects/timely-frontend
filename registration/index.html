@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Timely - Attendance Tracker</title>
+  <link
+    href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap"
+    rel="stylesheet">
+  <link rel='stylesheet' type='text/css' media='screen' href='main.css'>
+</head>
+
+<body>
+  <div class="app-container">
+    <div class="bg-pattern"></div>
+
+    <!-- Registration Screen -->
+    <div id="register-screen" class="screen active">
+      <div class="register-container">
+        <div class="register-logo">
+          <div class="register-logo-icon">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+          </div>
+          <h1>Timely</h1>
+          <p>Create your account to get started</p>
+        </div>
+
+        <div class="register-form">
+          <div class="form-group">
+            <label class="form-label" for="fullName">Full Name</label>
+            <input type="text" id="fullName" class="form-input" placeholder="Enter your full name" autocomplete="name">
+            <p class="form-error" id="fullName-error">Please enter your full name</p>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="matricNumber">Matric Number</label>
+            <input type="text" id="matricNumber" class="form-input" placeholder="e.g., STU/2024/001" autocomplete="off">
+            <p class="form-error" id="matricNumber-error">Please enter a valid matric number</p>
+          </div>
+
+          <div class="face-capture-section">
+            <label class="form-label">Face ID</label>
+            <div class="face-capture-box" id="face-capture-box" onclick="openFaceCaptureModal()">
+              <div class="face-capture-icon">
+                <svg id="face-icon-default" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
+                </svg>
+                <svg id="face-icon-success" style="display: none;" fill="none" stroke="currentColor"
+                  viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                </svg>
+              </div>
+              <p class="face-capture-title" id="face-capture-title">Capture Face ID</p>
+              <p class="face-capture-desc" id="face-capture-desc">Tap to register your face for verification</p>
+            </div>
+            <p class="form-error" id="faceId-error">Please capture your Face ID</p>
+          </div>
+
+          <button class="btn btn-primary btn-full" onclick="submitRegistration()">
+            <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
+            </svg>
+            Register
+          </button>
+
+          <p class="login-link">
+            Already have an account? <a onclick="skipToHome()">Sign In</a>
+          </p>
+        </div>
+      </div>                                                                                 
+    </div>
+
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loading-overlay">
+      <div class="loading-spinner"></div>
+      <p class="loading-text" id="loading-text">Verifying...</p>
+    </div>
+
+
+
+    <!-- Face Capture Modal -->
+    <div class="modal-overlay" id="face-capture-modal">
+      <div class="modal" style="border-radius: 24px;">
+        <div class="modal-header">
+          <h3 class="modal-title">Capture Face ID</h3>
+          <button class="modal-close" onclick="closeFaceCaptureModal()">
+
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="face-modal-camera">
+            <div class="face-modal-placeholder">
+              <canvas id="overlay"></canvas>
+              <video id="video" autoplay muted playsinline
+                style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; border-radius: 12px;">
+              </video>
+              <div class="face-modal-outline">
+
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                    d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+              </div>
+              <div class="face-modal-scan"></div>
+            </div>
+          </div>
+          <p style="text-align: center; color: var(--text-secondary); margin-bottom: 20px; font-size: 14px;">
+            Position your face within the oval frame and hold steady
+          </p>
+
+
+          <button class="btn btn-primary btn-full" onclick="captureFaceId()">
+            <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
+            </svg>
+            Capture
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Alert Modal -->
+    <div class="alert-modal" id="alert-modal">
+      <div class="alert-box">
+        <div class="alert-icon" id="alert-icon">
+          <svg id="alert-icon-success" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+          </svg>
+          <svg id="alert-icon-error" style="display: none;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+          <svg id="alert-icon-warning" style="display: none;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+          </svg>
+        </div>
+        <h3 class="alert-title" id="alert-title">Success</h3>
+        <p class="alert-message" id="alert-message">Operation completed successfully.</p>
+        <button class="btn btn-primary btn-full" onclick="closeAlertModal()">OK</button>
+      </div>
+    </div>
+  </div>
+ <script src="https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.3" type="module"></script>
+  <script src="main.js" type="module">
+   
+  </script>
+</body>
+
+</html>
