@@ -22,7 +22,7 @@ const state = {
   ],
   attendanceHistory: []
 };
-const api_endpoint = 'http://127.0.0.1:8000';
+const api_endpoint = 'http://51.20.75.100:8000';
 
 async function fetchClassrooms() {
   try {
