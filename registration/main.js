@@ -37,7 +37,7 @@ async function registerFace() {
     formData.append('face_image', state.user.faceBlob); // This matches our Django 'request.FILES'
 
     try {
-        const res = await fetch('http://127.0.0.1:8000/api/register-face/', {
+        const res = await fetch('http://51.20.75.100:8000/api/register-face/', {
             method: 'POST',
             body: formData // Browser sets Content-Type to multipart/form-data automatically
         });
